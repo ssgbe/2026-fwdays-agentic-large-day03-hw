@@ -241,7 +241,10 @@ const LayerUI = ({
       <Section
         heading="selectedShapeActions"
         className={clsx("selected-shape-actions zen-mode-transition", {
-          "transition-left": appState.zenModeEnabled,
+          "transition-left":
+            appState.zenModeEnabled &&
+            appState.openPopup !== "elementStroke" &&
+            appState.openPopup !== "elementBackground",
         })}
       >
         {isCompactMode ? (
