@@ -6,7 +6,7 @@ import { Excalidraw } from "../index";
 
 import { API } from "./helpers/api";
 import { Keyboard, UI } from "./helpers/ui";
-import { render } from "./test-utils";
+import { act, render } from "./test-utils";
 
 // Radix UI's useSize hook requires ResizeObserver; polyfill it for jsdom.
 const mockResizeObserver = () => {
@@ -20,7 +20,7 @@ const mockResizeObserver = () => {
 describe("zen mode — color picker shortcuts", () => {
   beforeEach(async () => {
     mockResizeObserver();
-    await render(<Excalidraw />);
+    await render(<Excalidraw handleKeyboardGlobally={true} />);
     // Create and keep a selected element so that showSelectedShapeActions
     // returns true and .selected-shape-actions is rendered in the DOM.
     UI.createElement("rectangle", { size: 100 });
@@ -29,7 +29,7 @@ describe("zen mode — color picker shortcuts", () => {
   // ─── LayerUI behaviour (directly tests the transition-left fix) ───────────
 
   it("selected-shape-actions has transition-left when zenMode is on and no popup open", () => {
-    API.setAppState({ zenModeEnabled: true, openPopup: null });
+    API.setAppState({ zenModeEnabled: true });
 
     const panel = document.querySelector(".selected-shape-actions");
     expect(panel).not.toBeNull();
@@ -37,7 +37,8 @@ describe("zen mode — color picker shortcuts", () => {
   });
 
   it("selected-shape-actions loses transition-left when elementStroke popup opens in zenMode", () => {
-    API.setAppState({ zenModeEnabled: true, openPopup: "elementStroke" });
+    API.setAppState({ zenModeEnabled: true });
+    act(() => Keyboard.keyPress(KEYS.S));
 
     const panel = document.querySelector(".selected-shape-actions");
     expect(panel).not.toBeNull();
@@ -45,7 +46,8 @@ describe("zen mode — color picker shortcuts", () => {
   });
 
   it("selected-shape-actions loses transition-left when elementBackground popup opens in zenMode", () => {
-    API.setAppState({ zenModeEnabled: true, openPopup: "elementBackground" });
+    API.setAppState({ zenModeEnabled: true });
+    act(() => Keyboard.keyPress(KEYS.G));
 
     const panel = document.querySelector(".selected-shape-actions");
     expect(panel).not.toBeNull();
